@@ -1,0 +1,6 @@
+{
+  "name": "FoodieExpress",
+  "description": "Premium Online Food Delivery Ecosystem with real-time tracking, multi-role dashboards, interactive menus, and DBMS management.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

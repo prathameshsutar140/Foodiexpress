@@ -1,0 +1,144 @@
+{
+  "entities": {
+    "users": {
+      "title": "User Profile",
+      "description": "User profile with role and contact information",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "maxLength": 128 },
+        "email": { "type": "string", "maxLength": 128 },
+        "displayName": { "type": "string", "maxLength": 128 },
+        "role": { "type": "string", "enum": ["customer", "restaurant_owner", "admin", "delivery_partner"] },
+        "phone": { "type": "string", "maxLength": 20 },
+        "createdAt": { "type": "string", "maxLength": 64 }
+      },
+      "required": ["uid", "email", "role"]
+    },
+    "restaurants": {
+      "title": "Restaurant",
+      "description": "Restaurant details, opening status, and contact info",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 64 },
+        "name": { "type": "string", "maxLength": 128 },
+        "tagline": { "type": "string", "maxLength": 200 },
+        "description": { "type": "string", "maxLength": 500 },
+        "cuisineType": { "type": "string", "maxLength": 100 },
+        "rating": { "type": "number" },
+        "ratingCount": { "type": "number" },
+        "priceRange": { "type": "string", "maxLength": 10 },
+        "address": { "type": "string", "maxLength": 250 },
+        "city": { "type": "string", "maxLength": 100 },
+        "image": { "type": "string", "maxLength": 500 },
+        "isVegOnly": { "type": "boolean" },
+        "isOpen": { "type": "boolean" },
+        "deliveryTimeMin": { "type": "number" },
+        "minOrder": { "type": "number" },
+        "ownerId": { "type": "string", "maxLength": 128 }
+      },
+      "required": ["name", "cuisineType"]
+    },
+    "food_items": {
+      "title": "Food Item",
+      "description": "Dishes and menu items for restaurants",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 64 },
+        "restaurantId": { "type": "string", "maxLength": 64 },
+        "name": { "type": "string", "maxLength": 128 },
+        "description": { "type": "string", "maxLength": 500 },
+        "price": { "type": "number" },
+        "category": { "type": "string", "maxLength": 64 },
+        "isVeg": { "type": "boolean" },
+        "isBestseller": { "type": "boolean" },
+        "isAvailable": { "type": "boolean" },
+        "preparationTime": { "type": "number" },
+        "image": { "type": "string", "maxLength": 500 },
+        "rating": { "type": "number" }
+      },
+      "required": ["name", "price", "restaurantId"]
+    },
+    "orders": {
+      "title": "Order",
+      "description": "Food order lifecycle and payment records",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 64 },
+        "customerId": { "type": "string", "maxLength": 128 },
+        "customerName": { "type": "string", "maxLength": 128 },
+        "customerEmail": { "type": "string", "maxLength": 128 },
+        "customerPhone": { "type": "string", "maxLength": 20 },
+        "restaurantId": { "type": "string", "maxLength": 64 },
+        "restaurantName": { "type": "string", "maxLength": 128 },
+        "subtotal": { "type": "number" },
+        "deliveryFee": { "type": "number" },
+        "tax": { "type": "number" },
+        "discount": { "type": "number" },
+        "total": { "type": "number" },
+        "status": { "type": "string", "enum": ["placed", "confirmed", "preparing", "ready_for_pickup", "out_for_delivery", "delivered", "cancelled"] },
+        "paymentMethod": { "type": "string", "enum": ["cash_on_delivery", "demo_upi", "demo_card"] },
+        "paymentStatus": { "type": "string", "enum": ["pending", "completed", "failed"] },
+        "deliveryAddress": { "type": "string", "maxLength": 500 },
+        "deliveryPartnerId": { "type": "string", "maxLength": 128 },
+        "deliveryPartnerName": { "type": "string", "maxLength": 128 },
+        "createdAt": { "type": "string", "maxLength": 64 }
+      },
+      "required": ["customerId", "restaurantId", "total", "status"]
+    },
+    "reviews": {
+      "title": "Review",
+      "description": "Customer feedback and ratings for restaurant",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 64 },
+        "restaurantId": { "type": "string", "maxLength": 64 },
+        "customerId": { "type": "string", "maxLength": 128 },
+        "customerName": { "type": "string", "maxLength": 128 },
+        "rating": { "type": "number" },
+        "comment": { "type": "string", "maxLength": 500 },
+        "createdAt": { "type": "string", "maxLength": 64 }
+      },
+      "required": ["restaurantId", "customerId", "rating"]
+    },
+    "coupons": {
+      "title": "Coupon",
+      "description": "Discount vouchers and promotional codes",
+      "type": "object",
+      "properties": {
+        "code": { "type": "string", "maxLength": 30 },
+        "discountPercent": { "type": "number" },
+        "maxDiscount": { "type": "number" },
+        "minOrder": { "type": "number" },
+        "description": { "type": "string", "maxLength": 200 },
+        "isActive": { "type": "boolean" }
+      },
+      "required": ["code", "discountPercent"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "users",
+      "description": "User profiles"
+    },
+    "/restaurants/{restaurantId}": {
+      "schema": "restaurants",
+      "description": "Restaurant catalog"
+    },
+    "/food_items/{foodItemId}": {
+      "schema": "food_items",
+      "description": "Food menu items"
+    },
+    "/orders/{orderId}": {
+      "schema": "orders",
+      "description": "Customer food orders"
+    },
+    "/reviews/{reviewId}": {
+      "schema": "reviews",
+      "description": "Ratings and reviews"
+    },
+    "/coupons/{couponId}": {
+      "schema": "coupons",
+      "description": "Discount coupon list"
+    }
+  }
+}

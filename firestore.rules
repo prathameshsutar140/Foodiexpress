@@ -1,0 +1,56 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Default deny catch-all
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    // Users collection
+    match /users/{userId} {
+      allow read: if isSignedIn();
+      allow write: if isOwner(userId);
+    }
+
+    // Restaurants: public catalog read, authenticated management
+    match /restaurants/{restaurantId} {
+      allow read: if true;
+      allow create, update, delete: if isSignedIn();
+    }
+
+    // Food items: public catalog read, authenticated management
+    match /food_items/{foodItemId} {
+      allow read: if true;
+      allow create, update, delete: if isSignedIn();
+    }
+
+    // Orders: order lifecycle access
+    match /orders/{orderId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn();
+      allow update: if isSignedIn();
+      allow delete: if false;
+    }
+
+    // Reviews: public reading, authenticated creation
+    match /reviews/{reviewId} {
+      allow read: if true;
+      allow create: if isSignedIn();
+      allow update, delete: if isSignedIn() && resource.data.customerId == request.auth.uid;
+    }
+
+    // Coupons: public read, authenticated management
+    match /coupons/{couponId} {
+      allow read: if true;
+      allow write: if isSignedIn();
+    }
+  }
+}
